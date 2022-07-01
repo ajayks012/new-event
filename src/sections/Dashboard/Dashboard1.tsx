@@ -183,7 +183,25 @@ function Dashboard1(props: any) {
   const [tabValue, setTabValue] = useState(0)
   const [table1Data, setTable1Data] = useState<any>()
   const [table2Data, setTable2Data] = useState<any>()
-  const [ontimeCompletion, setOntimeCompletion] = useState<any>(0)
+  const [ontimeCompletion, setOntimeCompletion] = useState<any>('0')
+
+  const [myPendingTasksTotal, setMyPendingTasksTotal] = useState<any>('0')
+  const [myMissedTasks, setMyMissedTasks] = useState<any>('0')
+  const [myRejectedTasks, setMyRejectedTasks] = useState<any>('0')
+  const [myWk0Tasks, setMyWk0Tasks] = useState<any>('0')
+  const [myWk1Tasks, setMyWk1Tasks] = useState<any>('0')
+  const [myWk25Tasks, setMyWk25Tasks] = useState<any>('0')
+  const [myWk5Tasks, setMyWk5Tasks] = useState<any>('0')
+
+  const [myGroupPendingTasksTotal, setMyGroupPendingTasksTotal] =
+    useState<any>('0')
+  const [myGroupMissedTasks, setMyGroupMissedTasks] = useState<any>('0')
+  const [myGroupRejectedTasks, setMyGroupRejectedTasks] = useState<any>('0')
+  const [myGroupWk0Tasks, setMyGroupWk0Tasks] = useState<any>('0')
+  const [myGroupWk1Tasks, setMyGroupWk1Tasks] = useState<any>('0')
+  const [myGroupWk25Tasks, setMyGroupWk25Tasks] = useState<any>('0')
+  const [myGroupWk5Tasks, setMyGroupWk5Tasks] = useState<any>('0')
+
   // let newMap1: Array<any> = []
 
   const {
@@ -219,6 +237,7 @@ function Dashboard1(props: any) {
     let rangePendingTasks: Array<any> = []
     let rangeGroupPendingTasks: Array<any> = []
     setNewMap([...userTaskDashboard])
+
     getStatusNewCamundaAPI &&
       getStatusNewCamundaAPI(
         userDetail &&
@@ -228,7 +247,7 @@ function Dashboard1(props: any) {
       )
         .then((res) => {
           const pendingStatusDetails = res.data
-
+          console.log('new events', res.data)
           setIsProgressLoader(false)
           if (pendingStatusDetails && pendingStatusDetails.status) {
             pendingTasks =
@@ -263,11 +282,19 @@ function Dashboard1(props: any) {
             // console.log(inprogressTasks)
             // console.log(mygroupPendingTasks)
             // console.log(mygroupUnassignTasks)
+
             set_mypendingAction(pendingTasks)
             set_myinprogressAction(inprogressTasks)
             set_mygrouppendingAction(mygroupPendingTasks)
             set_mygroupunassignAction(mygroupUnassignTasks)
           }
+          // console.log(
+          //   'my pending',
+          //   pendingTasks,
+          //   inprogressTasks,
+          //   mygroupPendingTasks,
+          //   mygroupUnassignTasks
+          // )
         })
         .catch((error) => {
           setIsProgressLoader(false)
@@ -293,30 +320,77 @@ function Dashboard1(props: any) {
         //   getStatusEventCamundaAPI()
         .then((res) => {
           const pendingTaskDetails = res.data
-
+          console.log('my pending', pendingTaskDetails)
           setIsProgressLoader(false)
           setOntimeCompletion(pendingTaskDetails.ontimeCompletion)
-          if (pendingTaskDetails && pendingTaskDetails.status) {
-            rangePendingTasks =
-              pendingTaskDetails &&
-              pendingTaskDetails.status &&
-              pendingTaskDetails.status.filter(
-                (item: any) => item.details.toLowerCase() === 'mypendingtasks'
-                // (item: any) =>
-                //   item.details.toLowerCase() === 'mygrouppendingtasks'
-              )
-            rangeGroupPendingTasks =
-              pendingTaskDetails &&
-              pendingTaskDetails.status &&
-              pendingTaskDetails.status.filter(
-                (item: any) =>
-                  item.details.toLowerCase() === 'mygrouppendingtasks'
-              )
-            set_range_pendingAction(rangePendingTasks)
-            // set_myinprogressAction(inprogressTasks)
-            set_range_grouppendingAction(rangeGroupPendingTasks)
-            //set_mygroupunassignAction(mygroupUnassignTasks)
-          }
+
+          pendingTaskDetails.status.map((task: any) => {
+            if (task.details === 'myPendingTasks') {
+              setMyPendingTasksTotal(task.count)
+            }
+            if (task.details === 'myMissedTasks') {
+              setMyMissedTasks(task.count)
+            }
+            if (task.details === 'myRejectedTasks') {
+              setMyRejectedTasks(task.count)
+            }
+            if (task.details === 'myWk0Tasks') {
+              setMyWk0Tasks(task.count)
+            }
+            if (task.details === 'myWk1Tasks') {
+              setMyWk1Tasks(task.count)
+            }
+            if (task.details === 'myWk25Tasks') {
+              setMyWk25Tasks(task.count)
+            }
+            if (task.details === 'myWk5Tasks') {
+              setMyWk5Tasks(task.count)
+            }
+            if (task.details === 'myGroupPendingTasks') {
+              console.log('all my tasks', task.count)
+              setMyGroupPendingTasksTotal(task.count)
+            }
+            if (task.details === 'myGroupMissedTasks') {
+              setMyGroupMissedTasks(task.count)
+            }
+            if (task.details === 'myGroupRejectedTasks') {
+              setMyGroupRejectedTasks(task.count)
+            }
+            if (task.details === 'myGroupWk0Tasks') {
+              setMyGroupWk0Tasks(task.count)
+            }
+            if (task.details === 'myGroupWk1Tasks') {
+              setMyGroupWk1Tasks(task.count)
+            }
+            if (task.details === 'myGroupWk25Tasks') {
+              setMyGroupWk25Tasks(task.count)
+            }
+            if (task.details === 'myGroupWk5Tasks') {
+              setMyGroupWk5Tasks(task.count)
+            }
+          })
+
+          // if (pendingTaskDetails && pendingTaskDetails.status) {
+          //   rangePendingTasks =
+          //     pendingTaskDetails &&
+          //     pendingTaskDetails.status &&
+          //     pendingTaskDetails.status.filter(
+          //       (item: any) => item.details.toLowerCase() === 'mypendingtasks'
+          //       // (item: any) =>
+          //       //   item.details.toLowerCase() === 'mygrouppendingtasks'
+          //     )
+          //   rangeGroupPendingTasks =
+          //     pendingTaskDetails &&
+          //     pendingTaskDetails.status &&
+          //     pendingTaskDetails.status.filter(
+          //       (item: any) =>
+          //         item.details.toLowerCase() === 'mygrouppendingtasks'
+          //     )
+          //   set_range_pendingAction(rangePendingTasks)
+          //   // set_myinprogressAction(inprogressTasks)
+          //   set_range_grouppendingAction(rangeGroupPendingTasks)
+          //   //set_mygroupunassignAction(mygroupUnassignTasks)
+          // }
         })
         .catch((error) => {
           setIsProgressLoader(false)
@@ -335,13 +409,14 @@ function Dashboard1(props: any) {
     // console.log(myinprogressTasks)
     // console.log(mygroupPendingAction)
     // console.log(mygroupUnassignTasks)
+
     if (
       mypendingAction &&
       myinprogressTasks &&
-      mygroupPendingAction &&
-      mygroupUnassignTasks &&
-      eventPendingAction &&
-      eventGroupPendingAction &&
+      // mygroupPendingAction &&
+      // mygroupUnassignTasks &&
+      // eventPendingAction &&
+      // eventGroupPendingAction &&
       userDetail
     ) {
       const rolelist =
@@ -409,65 +484,71 @@ function Dashboard1(props: any) {
                 ? parseInt(mygroupUnassignTasks[0].count)
                 : 0
           } else if (item.value.toLowerCase() === 'rangechangemanagement') {
-            item.my.total =
-              eventPendingAction.length > 0 &&
-              eventPendingAction[0].tasks.length > 0
-                ? eventPendingAction[0].tasks.length
-                : 0
-            item.my.weekMoreThanFive =
-              eventPendingAction.length > 0 &&
-              eventPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === '> Week 5'
-              ).length > 0
-                ? eventPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === '> Week 5'
-                  ).length
-                : 0
-            item.my.weekTwoToFive =
-              eventPendingAction.length > 0 &&
-              eventPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Week 2 to Week 5'
-              ).length > 0
-                ? eventPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Week 2 to Week 5'
-                  ).length
-                : 0
-            item.my.nextWeek =
-              eventPendingAction.length > 0 &&
-              eventPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Next Week'
-              ).length > 0
-                ? eventPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Next Week'
-                  ).length
-                : 0
-            item.my.currentWeek =
-              eventPendingAction.length > 0 &&
-              eventPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Current Week'
-              ).length > 0
-                ? eventPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Current Week'
-                  ).length
-                : 0
-            item.my.rejected =
-              eventPendingAction.length > 0 &&
-              eventPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Rejected'
-              ).length > 0
-                ? eventPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Rejected'
-                  ).length
-                : 0
-            item.my.missedOrOverdue =
-              eventPendingAction.length > 0 &&
-              eventPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Missed'
-              ).length > 0
-                ? eventPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Missed'
-                  ).length
-                : 0
+            item.my.total = myPendingTasksTotal
+            // eventPendingAction.length > 0 &&
+            // eventPendingAction[0].tasks.length > 0
+            //   ? eventPendingAction[0].tasks.length
+            //   : 0
+
+            item.my.weekMoreThanFive = myWk5Tasks
+            // eventPendingAction.length > 0 &&
+            // eventPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === '> Week 5'
+            // ).length > 0
+            //   ? eventPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === '> Week 5'
+            //     ).length
+            //   : 0
+
+            item.my.weekTwoToFive = myWk25Tasks
+            // eventPendingAction.length > 0 &&
+            // eventPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Week 2 to Week 5'
+            // ).length > 0
+            //   ? eventPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Week 2 to Week 5'
+            //     ).length
+            //   : 0
+
+            item.my.nextWeek = myWk1Tasks
+            // eventPendingAction.length > 0 &&
+            // eventPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Next Week'
+            // ).length > 0
+            //   ? eventPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Next Week'
+            //     ).length
+            //   : 0
+
+            item.my.currentWeek = myWk0Tasks
+            // eventPendingAction.length > 0 &&
+            // eventPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Current Week'
+            // ).length > 0
+            //   ? eventPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Current Week'
+            //     ).length
+            //   : 0
+
+            item.my.rejected = myRejectedTasks
+            // eventPendingAction.length > 0 &&
+            // eventPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Rejected'
+            // ).length > 0
+            //   ? eventPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Rejected'
+            //     ).length
+            //   : 0
+
+            item.my.missedOrOverdue = myMissedTasks
+            // eventPendingAction.length > 0 &&
+            // eventPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Missed'
+            // ).length > 0
+            //   ? eventPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Missed'
+            //     ).length
+            //   : 0
             // item.my.missedOrOverdue =
             //   eventPendingAction.length > 0 &&
             //   eventPendingAction[0].tasks.filter(
@@ -479,86 +560,100 @@ function Dashboard1(props: any) {
             //     : 0
             item.myGroup.total =
               // adminqn &&
-              eventAccess &&
-              eventGroupPendingAction.length > 0 &&
-              eventGroupPendingAction[0].tasks.length > 0
-                ? eventGroupPendingAction[0].tasks.length
-                : 0
-            item.myGroup.weekMoreThanFive =
-              eventAccess &&
-              eventGroupPendingAction.length > 0 &&
-              eventGroupPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === '> Week 5'
-              ).length > 0
-                ? eventGroupPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === '> Week 5'
-                  ).length
-                : 0
-            item.myGroup.weekTwoToFive =
-              eventAccess &&
-              eventGroupPendingAction.length > 0 &&
-              eventGroupPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Week 2 to Week 5'
-              ).length > 0
-                ? eventGroupPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Week 2 to Week 5'
-                  ).length
-                : 0
-            item.myGroup.nextWeek =
-              eventAccess &&
-              eventGroupPendingAction.length > 0 &&
-              eventGroupPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Next Week'
-              ).length > 0
-                ? eventGroupPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Next Week'
-                  ).length
-                : 0
-            item.myGroup.currentWeek =
-              eventAccess &&
-              eventGroupPendingAction.length > 0 &&
-              eventGroupPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Current Week'
-              ).length > 0
-                ? eventGroupPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Current Week'
-                  ).length
-                : 0
-            item.myGroup.rejected =
-              eventAccess &&
-              eventGroupPendingAction.length > 0 &&
-              eventGroupPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Rejected'
-              ).length > 0
-                ? eventGroupPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Rejected'
-                  ).length
-                : 0
-            item.myGroup.missedOrOverdue =
-              eventAccess &&
-              eventGroupPendingAction.length > 0 &&
-              eventGroupPendingAction[0].tasks.filter(
-                (item: any) => item.timeFilter === 'Missed'
-              ).length > 0
-                ? eventGroupPendingAction[0].tasks.filter(
-                    (item: any) => item.timeFilter === 'Missed'
-                  ).length
-                : 0
+              eventAccess && myGroupPendingTasksTotal
+            // eventGroupPendingAction.length > 0 &&
+            // eventGroupPendingAction[0].tasks.length > 0
+            //   ? eventGroupPendingAction[0].tasks.length
+            //   : 0
+
+            item.myGroup.weekMoreThanFive = eventAccess && myGroupWk5Tasks
+            // eventGroupPendingAction.length > 0 &&
+            // eventGroupPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === '> Week 5'
+            // ).length > 0
+            //   ? eventGroupPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === '> Week 5'
+            //     ).length
+            //   : 0
+
+            item.myGroup.weekTwoToFive = eventAccess && myGroupWk25Tasks
+            // eventGroupPendingAction.length > 0 &&
+            // eventGroupPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Week 2 to Week 5'
+            // ).length > 0
+            //   ? eventGroupPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Week 2 to Week 5'
+            //     ).length
+            //   : 0
+
+            item.myGroup.nextWeek = eventAccess && myGroupWk1Tasks
+            // eventGroupPendingAction.length > 0 &&
+            // eventGroupPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Next Week'
+            // ).length > 0
+            //   ? eventGroupPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Next Week'
+            //     ).length
+            //   : 0
+
+            item.myGroup.currentWeek = eventAccess && myGroupWk0Tasks
+            // eventGroupPendingAction.length > 0 &&
+            // eventGroupPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Current Week'
+            // ).length > 0
+            //   ? eventGroupPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Current Week'
+            //     ).length
+            //   : 0
+
+            item.myGroup.rejected = eventAccess && myGroupRejectedTasks
+            // eventGroupPendingAction.length > 0 &&
+            // eventGroupPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Rejected'
+            // ).length > 0
+            //   ? eventGroupPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Rejected'
+            //     ).length
+            //   : 0
+
+            item.myGroup.missedOrOverdue = eventAccess && myGroupMissedTasks
+            // eventGroupPendingAction.length > 0 &&
+            // eventGroupPendingAction[0].tasks.filter(
+            //   (item: any) => item.timeFilter === 'Missed'
+            // ).length > 0
+            //   ? eventGroupPendingAction[0].tasks.filter(
+            //       (item: any) => item.timeFilter === 'Missed'
+            //     ).length
+            //   : 0
           }
 
           return item
         })
-      console.log(newMap)
+      console.log('new Map', newMap)
       setNewMap([...newMap1])
     }
   }, [
     userDetail,
     mypendingAction,
     myinprogressTasks,
-    mygroupPendingAction,
-    mygroupUnassignTasks,
-    eventPendingAction,
-    eventGroupPendingAction,
+    // mygroupPendingAction,
+    // mygroupUnassignTasks,
+    // eventPendingAction,
+    // eventGroupPendingAction,
+    myWk0Tasks,
+    myWk1Tasks,
+    myWk25Tasks,
+    myWk5Tasks,
+    myPendingTasksTotal,
+    myMissedTasks,
+    myRejectedTasks,
+    myGroupWk0Tasks,
+    myGroupWk1Tasks,
+    myGroupWk25Tasks,
+    myGroupWk5Tasks,
+    myGroupPendingTasksTotal,
+    myGroupMissedTasks,
+    myGroupRejectedTasks,
   ])
 
   useEffect(() => {
@@ -594,7 +689,7 @@ function Dashboard1(props: any) {
 
   const missedTemplate = (rowData: any) => {
     console.log(rowData)
-    if (rowData.missedOrOverdue === 0) {
+    if (rowData.missedOrOverdue === '0') {
       return <div className={classes.rejectEror}>{rowData.missedOrOverdue}</div>
     } else {
       return (
@@ -611,7 +706,7 @@ function Dashboard1(props: any) {
   }
 
   const rejectedTemplate = (rowData: any) => {
-    if (rowData.rejected === 0) {
+    if (rowData.rejected === '0') {
       return <div className={classes.rejectEror}>{rowData.rejected}</div>
     } else {
       return (
@@ -627,7 +722,7 @@ function Dashboard1(props: any) {
     }
   }
   const currentWeekTemplate = (rowData: any) => {
-    if (rowData.currentWeek === 0) {
+    if (rowData.currentWeek === '0') {
       return <div className={classes.weekEror}>{rowData.currentWeek}</div>
     } else {
       return (
@@ -645,7 +740,7 @@ function Dashboard1(props: any) {
     }
   }
   const nextWeekTemplate = (rowData: any) => {
-    if (rowData.nextWeek === 0) {
+    if (rowData.nextWeek === '0') {
       return <div className={classes.weekEror}>{rowData.nextWeek}</div>
     } else {
       return (
@@ -661,7 +756,7 @@ function Dashboard1(props: any) {
     }
   }
   const weekTwoToFiveTemplate = (rowData: any) => {
-    if (rowData.weekTwoToFive === 0) {
+    if (rowData.weekTwoToFive === '0') {
       return <div className={classes.weekEror}>{rowData.weekTwoToFive}</div>
     } else {
       return (
@@ -680,7 +775,7 @@ function Dashboard1(props: any) {
   }
 
   const weekMoreThanFiveTemplate = (rowData: any) => {
-    if (rowData.weekMoreThanFive === 0) {
+    if (rowData.weekMoreThanFive === '0') {
       return <div className={classes.weekEror}>{rowData.weekMoreThanFive}</div>
     } else {
       return (
@@ -697,7 +792,7 @@ function Dashboard1(props: any) {
   }
 
   const totalTemplate = (rowData: any) => {
-    if (rowData.total === 0) {
+    if (rowData.total === '0') {
       return <div className={classes.weekEror}>{rowData.total}</div>
     } else {
       return (
@@ -715,7 +810,7 @@ function Dashboard1(props: any) {
 
   const missedTemplate1 = (rowData: any) => {
     console.log(rowData)
-    if (rowData.missedOrOverdue === 0) {
+    if (rowData.missedOrOverdue === '0') {
       return <div className={classes.rejectEror}>{rowData.missedOrOverdue}</div>
     } else {
       return (
@@ -732,7 +827,7 @@ function Dashboard1(props: any) {
   }
 
   const rejectedTemplate1 = (rowData: any) => {
-    if (rowData.rejected === 0) {
+    if (rowData.rejected === '0') {
       return <div className={classes.rejectEror}>{rowData.rejected}</div>
     } else {
       return (
@@ -748,7 +843,7 @@ function Dashboard1(props: any) {
     }
   }
   const currentWeekTemplate1 = (rowData: any) => {
-    if (rowData.currentWeek === 0) {
+    if (rowData.currentWeek === '0') {
       return <div className={classes.weekEror}>{rowData.currentWeek}</div>
     } else {
       return (
@@ -764,7 +859,7 @@ function Dashboard1(props: any) {
     }
   }
   const nextWeekTemplate1 = (rowData: any) => {
-    if (rowData.nextWeek === 0) {
+    if (rowData.nextWeek === '0') {
       return <div className={classes.weekEror}>{rowData.nextWeek}</div>
     } else {
       return (
@@ -780,7 +875,7 @@ function Dashboard1(props: any) {
     }
   }
   const weekTwoToFiveTemplate1 = (rowData: any) => {
-    if (rowData.weekTwoToFive === 0) {
+    if (rowData.weekTwoToFive === '0') {
       return <div className={classes.weekEror}>{rowData.weekTwoToFive}</div>
     } else {
       return (
@@ -797,7 +892,7 @@ function Dashboard1(props: any) {
   }
 
   const weekMoreThanFiveTemplate1 = (rowData: any) => {
-    if (rowData.weekMoreThanFive === 0) {
+    if (rowData.weekMoreThanFive === '0') {
       return <div className={classes.weekEror}>{rowData.weekMoreThanFive}</div>
     } else {
       return (
@@ -814,7 +909,7 @@ function Dashboard1(props: any) {
   }
 
   const totalTemplate1 = (rowData: any) => {
-    if (rowData.total === 0) {
+    if (rowData.total === '0') {
       return <div className={classes.weekEror}>{rowData.total}</div>
     } else {
       return (

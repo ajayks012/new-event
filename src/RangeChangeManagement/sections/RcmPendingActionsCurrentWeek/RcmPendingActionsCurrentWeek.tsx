@@ -27,6 +27,7 @@ import {
   putCamundaMileStoneUpdate,
   getUsersAPIByRole,
   getUsersAPIByRolWithStatusA,
+  getStatusEventCamundaAPINewWithFilter,
 } from '../../../api/Fetch'
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 import { allMessages } from '../../../util//Messages'
@@ -81,25 +82,59 @@ function RcmPendingActionsCurrentWeek(props: any) {
     reset_range_pendingAction()
     history.goBack()
   }
-  useEffect(() => {
-    return () => {
-      reset_range_pendingAction()
-      // setUnassignUser(null)
-      setAssignToOther([])
-    }
-  }, [])
+  // useEffect(() => {
+  //   return () => {
+  //     reset_range_pendingAction()
+  //     // setUnassignUser(null)
+  //     setAssignToOther([])
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   if (eventPendingAction && eventPendingAction[0].tasks != []) {
+  //     console.log(eventPendingAction[0].tasks)
+  //     setMyPendingActions(
+  //       eventPendingAction[0].tasks.filter(
+  //         (item: any) => item.timeFilter === 'Current Week'
+  //       )
+  //     )
+  //   } else {
+  //     history.push(`${DEFAULT}${DASHBOARD}`)
+  //   }
+  // }, [])
 
   useEffect(() => {
-    if (eventPendingAction && eventPendingAction[0].tasks != []) {
-      console.log(eventPendingAction[0].tasks)
-      setMyPendingActions(
-        eventPendingAction[0].tasks.filter(
-          (item: any) => item.timeFilter === 'Current Week'
+    setIsProgressLoader(true)
+    let userGroup =
+      userDetail.userdetails &&
+      userDetail.userdetails[0].usergroups[0].groupName.split('-')
+    console.log(userGroup)
+    let userGroup1 = userGroup[0].trim()
+    console.log(userGroup1)
+    getStatusEventCamundaAPINewWithFilter(
+      userDetail &&
+        userDetail.userdetails &&
+        userDetail.userdetails[0].user.userId,
+      userDetail &&
+        userDetail.userdetails &&
+        userDetail.userdetails[0].roles[0].roleName,
+      userGroup1,
+      'myWk0Tasks'
+    )
+      .then((res: any) => {
+        console.log('filter response', res.data)
+        let responseData = res.data.status
+        let newData = responseData.filter(
+          (task: any) => task.details === 'myWk0Tasks'
         )
-      )
-    } else {
-      history.push(`${DEFAULT}${DASHBOARD}`)
-    }
+        console.log('new response', newData)
+        setMyPendingActions(newData[0].tasks)
+        setIsProgressLoader(false)
+      })
+      .catch((err: any) => {
+        console.log(err)
+        setMyPendingActions([])
+      })
   }, [])
 
   const handleSingleEvent = (data: any) => {

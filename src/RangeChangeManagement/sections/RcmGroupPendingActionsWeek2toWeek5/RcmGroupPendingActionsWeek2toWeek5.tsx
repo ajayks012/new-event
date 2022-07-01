@@ -24,6 +24,7 @@ import {
   getAllActiveUsersAPI,
   claimEventsCamunda,
   postFileAttachmentRangeResetAPI,
+  getStatusEventCamundaAPINewWithFilter,
 } from '../../../api/Fetch'
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 import { allMessages } from '../../../util/Messages'
@@ -69,23 +70,57 @@ function RcmGroupPendingActionsWeek2toWeek5(props: any) {
     history.goBack()
   }
 
-  useEffect(() => {
-    return () => {
-      reset_range_grouppendingAction()
-    }
-  }, [])
+  // useEffect(() => {
+  //   return () => {
+  //     reset_range_grouppendingAction()
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   if (eventGroupPendingAction && eventGroupPendingAction[0].tasks != []) {
+  //     console.log(eventGroupPendingAction[0].tasks)
+  //     setMyPendingActions(
+  //       eventGroupPendingAction[0].tasks.filter(
+  //         (item: any) => item.timeFilter === 'Week 2 to Week 5'
+  //       )
+  //     )
+  //   } else {
+  //     history.push(`${DEFAULT}${DASHBOARD}`)
+  //   }
+  // }, [])
 
   useEffect(() => {
-    if (eventGroupPendingAction && eventGroupPendingAction[0].tasks != []) {
-      console.log(eventGroupPendingAction[0].tasks)
-      setMyPendingActions(
-        eventGroupPendingAction[0].tasks.filter(
-          (item: any) => item.timeFilter === 'Week 2 to Week 5'
+    setIsProgressLoader(true)
+    let userGroup =
+      userDetail.userdetails &&
+      userDetail.userdetails[0].usergroups[0].groupName.split('-')
+    console.log(userGroup)
+    let userGroup1 = userGroup[0].trim()
+    console.log(userGroup1)
+    getStatusEventCamundaAPINewWithFilter(
+      userDetail &&
+        userDetail.userdetails &&
+        userDetail.userdetails[0].user.userId,
+      userDetail &&
+        userDetail.userdetails &&
+        userDetail.userdetails[0].roles[0].roleName,
+      userGroup1,
+      'myGroupWk25Tasks'
+    )
+      .then((res: any) => {
+        console.log('filter response', res.data)
+        let responseData = res.data.status
+        let newData = responseData.filter(
+          (task: any) => task.details === 'myGroupWk25Tasks'
         )
-      )
-    } else {
-      history.push(`${DEFAULT}${DASHBOARD}`)
-    }
+        console.log('new response', newData)
+        setMyPendingActions(newData[0].tasks)
+        setIsProgressLoader(false)
+      })
+      .catch((err: any) => {
+        console.log(err)
+        setMyPendingActions([])
+      })
   }, [])
 
   useEffect(() => {
